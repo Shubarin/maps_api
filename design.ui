@@ -28,7 +28,7 @@
            </sizepolicy>
           </property>
           <property name="text">
-           <string>Масштаб (1 - 17):</string>
+           <string>Масштаб (1 - 100):</string>
           </property>
          </widget>
         </item>
@@ -50,10 +50,10 @@
            <number>1</number>
           </property>
           <property name="maximum">
-           <number>17</number>
+           <number>100</number>
           </property>
           <property name="value">
-           <number>17</number>
+           <number>1</number>
           </property>
          </widget>
         </item>
@@ -122,8 +122,14 @@
           <verstretch>0</verstretch>
          </sizepolicy>
         </property>
+        <property name="focusPolicy">
+         <enum>Qt::StrongFocus</enum>
+        </property>
         <property name="text">
          <string/>
+        </property>
+        <property name="alignment">
+         <set>Qt::AlignCenter</set>
         </property>
        </widget>
       </item>
