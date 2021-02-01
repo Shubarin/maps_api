@@ -11,7 +11,13 @@ from geocoder import get_static_map, get_coordinate
 
 load_dotenv()
 
-LAYERS = ['map', 'sat', 'skl']
+LAYERS = {
+    'Обычная карта': 'map',
+    'Спутниковая карта': 'sat',
+    'Спутник с названиями': 'sat,skl',
+    'Карта пробок': 'map,trf,skl',
+    'Пробки на спутнике': 'sat,trf,skl'
+}
 START_LL = os.getenv('START_LL')
 LAYER = os.getenv('LAYER')
 
@@ -23,7 +29,7 @@ class Mapper(QMainWindow):
         self.ll = START_LL
         self.l = LAYER
         self.points = []
-        self.layers.addItems(LAYERS)
+        self.layers.addItems(LAYERS.keys())
         self.load_map()
         self.z.valueChanged.connect(self.load_map)
         self.layers.currentTextChanged.connect(self.load_map)
@@ -62,7 +68,7 @@ class Mapper(QMainWindow):
     def load_map(self):
         pixmap = QPixmap()
         z = self.z.value()
-        l = self.layers.currentText()
+        l = LAYERS[self.layers.currentText()]
         pixmap.loadFromData(get_static_map(z=z, l=l, ll=self.ll,
                                            points=self.points))
         self.map_img.setPixmap(pixmap)
