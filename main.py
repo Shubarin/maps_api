@@ -31,10 +31,10 @@ class Mapper(QMainWindow):
 
     def keyPressEvent(self, event):
         if int(event.modifiers()) == Qt.ControlModifier:
-            if event.key() == Qt.Key_Equal:
+            if event.key() == Qt.Key_Minus:
                 if self.z.value() + 1 < 101:
                     self.z.setValue(self.z.value() + 1)
-            elif event.key() == Qt.Key_Minus:
+            elif event.key() == Qt.Key_Equal:
                 if self.z.value() - 1 > 0:
                     self.z.setValue(self.z.value() - 1)
         x_center, y_center = map(float, self.ll.split(','))
