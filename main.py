@@ -34,6 +34,12 @@ class Mapper(QMainWindow):
         self.z.valueChanged.connect(self.load_map)
         self.layers.currentTextChanged.connect(self.load_map)
         self.search.clicked.connect(self.set_ll)
+        self.clean.clicked.connect(self.clean_history)
+
+    def clean_history(self):
+        self.points.clear()
+        self.query.setText('')
+        self.load_map()
 
     def keyPressEvent(self, event):
         if int(event.modifiers()) == Qt.ControlModifier:
