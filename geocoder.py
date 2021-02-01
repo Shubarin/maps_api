@@ -43,11 +43,33 @@ def get_coordinate(address):
     if response:
         json_response = response.json()
         toponym = \
-        json_response["response"]["GeoObjectCollection"]["featureMember"][0][
-            "GeoObject"]
+            json_response["response"]["GeoObjectCollection"]["featureMember"][
+                0][
+                "GeoObject"]
         toponym_coodrinates = toponym["Point"]["pos"]
         ll = ','.join(toponym_coodrinates.split())
         return ll
+
+
+def get_full_address(address):
+    url = 'http://geocode-maps.yandex.ru/1.x/'
+    params = {
+        'apikey': API_KEY,
+        'geocode': address,
+        'format': 'json'
+    }
+    response = requests.get(url=url, params=params)
+    if response:
+        json_response = response.json()
+        toponym = \
+            json_response["response"]["GeoObjectCollection"]["featureMember"][
+                0][
+                "GeoObject"]
+        toponym_address = toponym["metaDataProperty"]["GeocoderMetaData"][
+            "text"]
+        toponym_coodrinates = toponym["Point"]["pos"]
+        ll = ','.join(toponym_coodrinates.split())
+        return ll, toponym_address
 
 
 if __name__ == '__main__':

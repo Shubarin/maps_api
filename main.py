@@ -7,7 +7,7 @@ from PyQt5.QtGui import QPixmap
 from PyQt5.QtWidgets import QApplication, QMainWindow
 from dotenv import load_dotenv
 
-from geocoder import get_static_map, get_coordinate
+from geocoder import get_static_map, get_coordinate, get_full_address
 
 load_dotenv()
 
@@ -29,6 +29,7 @@ class Mapper(QMainWindow):
         self.ll = START_LL
         self.l = LAYER
         self.points = []
+        self.address = None
         self.layers.addItems(LAYERS.keys())
         self.load_map()
         self.z.valueChanged.connect(self.load_map)
@@ -39,6 +40,8 @@ class Mapper(QMainWindow):
     def clean_history(self):
         self.points.clear()
         self.query.setText('')
+        self.address = ''
+        self.statusBar().clearMessage()
         self.load_map()
 
     def keyPressEvent(self, event):
@@ -67,8 +70,9 @@ class Mapper(QMainWindow):
 
     def set_ll(self):
         if self.query.text():
-            self.ll = get_coordinate(self.query.text())
+            self.ll, self.address = get_full_address(self.query.text())
             self.points.append(self.ll)
+            self.statusBar().showMessage(self.address)
             self.load_map()
 
     def load_map(self):
