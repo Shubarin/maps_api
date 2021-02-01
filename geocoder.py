@@ -7,17 +7,25 @@ load_dotenv()
 
 API_KEY = os.getenv('GEOCODE_API_KEY')
 START_LL = os.getenv('START_LL')
-Z = os.getenv('Z')
+SCALE = int(os.getenv('SCALE'))
 LAYER = os.getenv('LAYER')
 
 
-def get_static_map(ll=START_LL, z=Z, l=LAYER):
+def get_static_map(ll, z, l, points):
     url = 'http://static-maps.yandex.ru/1.x/'
+    x, y = map(float, ll.split(','))
+    x_left = x - (z / SCALE)
+    x_right = x + (z / SCALE)
+    y_bottom = y - (z / SCALE)
+    y_top = y + (z / SCALE)
+    arg1 = ','.join([str(x_left), str(y_bottom)])
+    arg2 = ','.join([str(x_right), str(y_top)])
     params = {
-        'll': ll,
+        'bbox': arg1 + '~' + arg2,
         'l': l,
-        'z': z
     }
+    if points:
+        params['pt'] = '~'.join(points)
     response = requests.get(url, params)
     if not response:
         return
