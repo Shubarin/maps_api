@@ -94,6 +94,13 @@
          <widget class="QLineEdit" name="query"/>
         </item>
         <item>
+         <widget class="QCheckBox" name="indecies">
+          <property name="text">
+           <string>Показать индекс</string>
+          </property>
+         </widget>
+        </item>
+        <item>
          <widget class="QPushButton" name="search">
           <property name="sizePolicy">
            <sizepolicy hsizetype="Maximum" vsizetype="Maximum">

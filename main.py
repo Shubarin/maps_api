@@ -30,12 +30,14 @@ class Mapper(QMainWindow):
         self.l = LAYER
         self.points = []
         self.address = None
+        self.postal_code = None
         self.layers.addItems(LAYERS.keys())
         self.load_map()
         self.z.valueChanged.connect(self.load_map)
         self.layers.currentTextChanged.connect(self.load_map)
         self.search.clicked.connect(self.set_ll)
         self.clean.clicked.connect(self.clean_history)
+        self.indecies.stateChanged.connect(self.set_ll)
 
     def clean_history(self):
         self.points.clear()
@@ -70,9 +72,12 @@ class Mapper(QMainWindow):
 
     def set_ll(self):
         if self.query.text():
-            self.ll, self.address = get_full_address(self.query.text())
+            self.ll, self.address, self.postal_code = get_full_address(self.query.text())
             self.points.append(self.ll)
-            self.statusBar().showMessage(self.address)
+            msg = self.address
+            if self.indecies.checkState():
+                msg += ', индекс: ' + self.postal_code
+            self.statusBar().showMessage(msg)
             self.load_map()
 
     def load_map(self):
