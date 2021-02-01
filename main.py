@@ -2,6 +2,7 @@ import os
 import sys
 
 from PyQt5 import uic
+from PyQt5.QtCore import Qt
 from PyQt5.QtGui import QPixmap
 from PyQt5.QtWidgets import QApplication, QMainWindow
 from dotenv import load_dotenv
@@ -23,6 +24,17 @@ class Mapper(QMainWindow):
         self.z.valueChanged.connect(self.load_map)
         self.layers.currentTextChanged.connect(self.load_map)
         self.search.clicked.connect(self.load_map)
+
+    def keyPressEvent(self, event):
+        if int(event.modifiers()) == Qt.ControlModifier:
+            # так как нет клавиши Page_Up на клавиатуре
+            if event.key() == Qt.Key_Equal:
+                if self.z.value() + 1 < 18:
+                    self.z.setValue(self.z.value() + 1)
+            elif event.key() == Qt.Key_Minus:
+                if self.z.value() - 1 > 0:
+                    self.z.setValue(self.z.value() - 1)
+
 
     def load_map(self):
         pixmap = QPixmap()
