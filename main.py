@@ -4,10 +4,11 @@ import sys
 from PyQt5 import uic
 from PyQt5.QtCore import Qt
 from PyQt5.QtGui import QPixmap
-from PyQt5.QtWidgets import QApplication, QMainWindow
+from PyQt5.QtWidgets import QApplication, QMainWindow, QErrorMessage
 from dotenv import load_dotenv
 
 from geocoder import get_static_map, get_coordinate, get_full_address
+from organisation import find_organisation
 
 load_dotenv()
 
@@ -49,29 +50,29 @@ class Mapper(QMainWindow):
         self.load_map()
 
     def mousePressEvent(self, event):
+        msg = ''
+        x_center, y_center = map(float, self.ll.split(','))
+        scale = self.z.value() / 500
+        width = 2 * scale
+        if event.x() > 600 / 2:
+            x = width / 600 * event.x() + x_center
+        else:
+            x = width * (event.x() / 600) + x_center - width
+        y = -width / 430 * event.y() + y_center + 3 * width / 4
+        ll = ','.join([str(x), str(y)])
         if event.button() == Qt.LeftButton:
-            print("Координаты:{}, {}".format(
-                event.x(), event.y()))
-            x_center, y_center = map(float, self.ll.split(','))
-            scale = self.z.value() / 500
-            width = 2 * scale
-            if event.x() > 600 / 2:
-                x = width / 600 * event.x() + x_center
-            else:
-                x = width * (event.x() / 600) + x_center - width
-            y = -width / 430 * event.y() + y_center + 3 * width / 4
-            ll = ','.join([str(x), str(y)])
-            self.clean_history()
-            self.points.append(ll)
             ll, self.address, self.postal_code = get_full_address(ll)
             msg = self.address
             if self.indecies.checkState():
                 msg += ', индекс: ' + self.postal_code
+        elif event.button() == Qt.RightButton:
+            msg = find_organisation(ll)
+        if msg:
+            QErrorMessage(self).showMessage(msg)
+            self.clean_history()
+            self.points.append(ll)
             self.statusBar().showMessage(msg)
             self.load_map()
-        elif event.button() == Qt.RightButton:
-            print("Координаты:{}, {}".format(
-                event.x(), event.y()))
 
     def keyPressEvent(self, event):
         if int(event.modifiers()) == Qt.ControlModifier:
