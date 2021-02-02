@@ -67,7 +67,12 @@ def get_full_address(address):
                 "GeoObject"]
         toponym_address = toponym["metaDataProperty"]["GeocoderMetaData"][
             "text"]
-        toponym_postal_code = toponym['metaDataProperty']['GeocoderMetaData']['Address']['postal_code']
+        try:
+            toponym_postal_code = \
+            toponym['metaDataProperty']['GeocoderMetaData']['Address'][
+                'postal_code']
+        except Exception:
+            toponym_postal_code = 'Не определено'
         toponym_coodrinates = toponym["Point"]["pos"]
         ll = ','.join(toponym_coodrinates.split())
         return ll, toponym_address, toponym_postal_code

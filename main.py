@@ -20,12 +20,14 @@ LAYERS = {
 }
 START_LL = os.getenv('START_LL')
 LAYER = os.getenv('LAYER')
+SCREEN_SIZE = os.getenv('SCREEN_SIZE')
 
 
 class Mapper(QMainWindow):
     def __init__(self):
         super(Mapper, self).__init__()
         uic.loadUi('design.ui', self)
+        self.setFixedSize(*map(int, SCREEN_SIZE.split(',')))
         self.ll = START_LL
         self.l = LAYER
         self.points = []
@@ -45,6 +47,31 @@ class Mapper(QMainWindow):
         self.address = ''
         self.statusBar().clearMessage()
         self.load_map()
+
+    def mousePressEvent(self, event):
+        if event.button() == Qt.LeftButton:
+            print("Координаты:{}, {}".format(
+                event.x(), event.y()))
+            x_center, y_center = map(float, self.ll.split(','))
+            scale = self.z.value() / 500
+            width = 2 * scale
+            if event.x() > 600 / 2:
+                x = width / 600 * event.x() + x_center
+            else:
+                x = width * (event.x() / 600) + x_center - width
+            y = -width / 430 * event.y() + y_center + 3 * width / 4
+            ll = ','.join([str(x), str(y)])
+            self.clean_history()
+            self.points.append(ll)
+            ll, self.address, self.postal_code = get_full_address(ll)
+            msg = self.address
+            if self.indecies.checkState():
+                msg += ', индекс: ' + self.postal_code
+            self.statusBar().showMessage(msg)
+            self.load_map()
+        elif event.button() == Qt.RightButton:
+            print("Координаты:{}, {}".format(
+                event.x(), event.y()))
 
     def keyPressEvent(self, event):
         if int(event.modifiers()) == Qt.ControlModifier:
@@ -72,7 +99,8 @@ class Mapper(QMainWindow):
 
     def set_ll(self):
         if self.query.text():
-            self.ll, self.address, self.postal_code = get_full_address(self.query.text())
+            self.ll, self.address, self.postal_code = get_full_address(
+                self.query.text())
             self.points.append(self.ll)
             msg = self.address
             if self.indecies.checkState():
